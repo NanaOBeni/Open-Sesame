@@ -1,3 +1,6 @@
+import * as dotenv from "dotenv";
+dotenv.config();
+
 // Rule 1
 export function uppercase_exist(str: string): boolean {
     const has_capital = /[A-Z]/.test(str);
@@ -54,41 +57,46 @@ export function country_exist(str: string, country: string): boolean {
 
 
 //rule 11, time in seconds
-export function video_exist(str: string, time_to_match): boolean {
-    // OBS!!! Expects the id to be last in the string
-    function get_video_id(): string {
-           const last_11 = str.slice(-11);
-           return last_11;
-    }
-
+export async function video_exist(str: string, time_to_match: number): Promise<boolean> {
     function iso_to_sec(iso_string: string): number {
         const match = iso_string.match(/PT(?:(\d+)H)?(?:(\d+)M)?(?:(\d+)S)?/);
         let time = 0;
         if (match[1] != undefined) {
-            time += 3600 * match[1];
+            time += 3600 * Number(match[1]);
         }
         if (match[2] != undefined) {
-            time += 60 * match[2];
+            time += 60 * Number(match[2]);
         }
         if (match[3] != undefined) {
-            time += match[3];
+            time += Number(match[3]);
         }
-
+        console.log("time: ", time);
         return time;
     }
 
-    const video_id = get_video_id();
+    // OBS!!! Expects the id to be last in the string
+    const video_id = str.slice(-11);
+    console.log("video_id: ", video_id);
 
-    const url = `https://www.googleapis.com/youtube/v3/videos?id=${video_id}&part=contentDetails&key=${YOUTUBE_API_KEY}`;
+    const url = `https://www.googleapis.com/youtube/v3/videos?id=${video_id}&part=contentDetails&key=${process.env.YOUTUBE_API_KEY}`;
+    console.log("url: ", url);
     
     const response = await fetch(url);
+    console.log("response: ", response);
     const json = await response.json();
+    console.log("json: ", json);
+
+    if (!json.items || json.items.length === 0) {
+        console.log("if check was called!")
+        return false;
+    }
 
     const time_iso_8601 = json.items[0].contentDetails.duration;
+    console.log("time_iso", time_iso_8601);
 
     const time = iso_to_sec(time_iso_8601);
 
-    return time;
+    return time_to_match === time;
 }
 
 

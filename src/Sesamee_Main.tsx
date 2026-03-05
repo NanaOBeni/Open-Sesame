@@ -2,16 +2,17 @@ import React from 'react'
 import { createRoot } from 'react-dom/client'
 import App from './App'
 import './styling.css'
+import * as dotenv from "dotenv";
 
-const GEOCODE_API_KEY;
+dotenv.config();
 
 createRoot(document.getElementById('root')!).render(<App />)
 
 function get_country_url(country: string): string {
     function get_place_id(): string {
-        const url = `https://api.geoapify.com/v1/geocode/search?=${encodeURIComponent(country)}&type=country&apiKey=${GEOCODE_API_KEY}`;
+        const geocode_url = `https://api.geoapify.com/v1/geocode/search?=${encodeURIComponent(country)}&type=country&apiKey=${process.env.GEOAPIFY_KEY}`;
 
-        const response = await fetch(geocodeUrl);
+        const response = await fetch(geocode_url);
         const json = await response.json();
 
         return json.results[0].place_id;
@@ -19,7 +20,7 @@ function get_country_url(country: string): string {
 
     const place_id = get_place_id();
 
-    const boundary_url = `https://api.geoapify.com/v1/boundaries/consists-of?id=${place_id}&geometry=geometry_1000&apiKey=${GEOCODE_API_KEY}`;
+    const boundary_url = `https://api.geoapify.com/v1/boundaries/consists-of?id=${place_id}&geometry=geometry_1000&apiKey=${process.env.GEOAPIFY_KEY}`;
 
     const boundary_response = await fetch(boundary_url);
     const boundary_json = await boundary_response.json();
