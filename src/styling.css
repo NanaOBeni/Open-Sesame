@@ -2,7 +2,3 @@ body {
   margin: 0;
   padding: 0;
 }
-
-.rule-item {
-  animation: slideIn 0.5s ease-in forwards;
-}

@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react"
-import { uppercase_exist, special_exist, minimun_8, greek_exist } from "../lib/rules"
+import { uppercase_exist, special_exist, minimum_8, greek_exist, country_exist, video_exist, remapKeys, contain_dev } from "../lib/rules"
+import { get_country_url } from "./utils"
 const fullTitle = 'Open Sesamee'
 const fullSubtitle = 'a game not at all inspired by The Password Game'
 const fullLabel = 'Please enter your password:'
@@ -10,44 +11,55 @@ export default function App() {
   const [subtitle, setSubtitle] = useState('')
   const [label, setLabel] = useState('')
   const [typingDone, setTypingDone] = useState(false)
+  const [country, setCountry] = useState('')
+  const [mapUrl, setMapUrl] = useState('')
+  const [videoValid, setVideoValid] = useState(false)
 
   const [RulesFinished, setRulesFinished] = useState(1)
 
-  const ruleDisplay = [
+  type Rule = {
+  fn: (str: string) => boolean
+  description: string
+  showMap?: boolean}
+
+  const ruleDisplay: Rule[] = [
   { fn: uppercase_exist, description: 'Must contain an uppercase letter' },
   { fn: special_exist, description: 'Must contain a special character' },
-  { fn: minimun_8, description: 'Must be at least 8 characters' },
-  { fn: greek_exist, description: 'Must contain a Greek letter' },]
+  { fn: minimum_8, description: 'Must be at least 8 characters' },
+  { fn: greek_exist, description: 'Must contain a Greek letter' },
+  { fn: (str: string) => country_exist(str, country), description: 'Must contain the name of the country shown above', showMap: true},
+  { fn: (_: string) => videoValid, description: 'Must enter a video of 15s length' },
+  { fn: contain_dev, description: 'Who do you like more? Felix, Isak, or Isaac?'}]
 
   const ruleArr = [
-    uppercase_exist, special_exist, minimun_8, greek_exist
+  uppercase_exist, special_exist, minimum_8, greek_exist,
+  (str: string) => country_exist(str, country), (_: string) => videoValid, contain_dev
   ]
 
-  /*useEffect(() => {
-    if (ruleArr[RulesFinished - 1]!(password)) {
-      setRulesFinished(RulesFinished + 1)
-    }
-  }, [password])*/
+  useEffect(() => {
+  video_exist(password, 15).then(result => setVideoValid(result))
+  }, [password])
+
+  useEffect(() => {
+  const countries = ['Sweden', 'Brazil', 'Japan', 'Egypt', 'Canada']
+  const picked = countries[Math.floor(Math.random() * countries.length)]!
+  setCountry(picked)
+  get_country_url(picked).then(url => setMapUrl(url))
+  }, [])
+
   useEffect(() => {
     let identifier = true
-    for (let i = 0; i < RulesFinished; i++) {
+
+    for (let i = 0; i < RulesFinished && i < ruleArr.length; i++) {
       if (!ruleArr[i]!(password)) {
         identifier = false
         break
       }
     }
-    if (identifier === true) {
+    if (identifier && RulesFinished < ruleArr.length) {
       setRulesFinished(RulesFinished + 1)
     }
-  }, [password])
-
-  const currentRule = ruleDisplay[RulesFinished - 1]
-
-  /*useEffect(() => {
-    if (ruleArr[RulesFinished]!(password)) {
-      setRulesFinished(RulesFinished + 1)
-    }
-  }, [password])*/
+  }, [password, RulesFinished])
 
   useEffect(() => {
     const texts = [
@@ -76,6 +88,12 @@ export default function App() {
 
     typeText(0)
   }, [])
+
+  useEffect(() => {
+  if (RulesFinished === 5) {
+    setPassword(prev => remapKeys(prev))
+    }
+  }, [RulesFinished])
 
   return (
     <div style={{
@@ -114,7 +132,7 @@ export default function App() {
           <textarea 
             id="typearea"
             rows={1}
-            value={password} 
+            value={password}
             onChange={(typing) => setPassword(typing.target.value)}
             style={{
               opacity: typingDone ? 1: 0,
@@ -153,21 +171,28 @@ export default function App() {
           fontSize: '20px',
           textAlign: 'center'
           }}>
+            
         {ruleDisplay.slice(0, RulesFinished).reverse().map((rule) => (
-        <p key={rule.description} className="rule-item" style={{ 
-        marginTop: '0px',
-        color: rule.fn(password) ? 'green' : 'red',
-        width: '300px',
-        border: rule.fn(password) ? '5px solid green' : '5px solid red',
-        borderRadius: '8px',
-        backgroundColor: rule.fn(password) ? '#9FFF96' : '#FFA696',
-        paddingTop: '20px',
-        paddingBottom: '20px',
-        paddingLeft: '10px',
-        paddingRight: '10px'
-        }}>
-        {rule.description}
-        </p>))}
+        <div key={rule.description}>
+          {rule.showMap && mapUrl && (
+            <img src={mapUrl} alt="Guess the country" style={{ width: '300px', borderRadius: '8px', marginBottom: '8px' }} />
+          )}
+          <p className="rule-item" style={{ 
+            marginTop: '0px',
+            color: rule.fn(password) ? 'green' : 'red',
+            width: '300px',
+            border: rule.fn(password) ? '5px solid green' : '5px solid red',
+            borderRadius: '8px',
+            backgroundColor: rule.fn(password) ? '#9FFF96' : '#FFA696',
+            paddingTop: '20px',
+            paddingBottom: '20px',
+            paddingLeft: '10px',
+            paddingRight: '10px'
+          }}>
+            {rule.description}
+          </p>
+        </div>
+        ))}
       </div>
     </div>
   )

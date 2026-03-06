@@ -1,5 +1,5 @@
-import * as dotenv from "dotenv";
-dotenv.config();
+//import * as dotenv from "dotenv";
+//dotenv.config();
 
 // Rule 1
 export function uppercase_exist(str: string): boolean {
@@ -56,7 +56,7 @@ export function country_exist(str: string, country: string): boolean {
 }
 //rule 6
 //remap keys. CALL ONLY ONCE.
-function remapKeys(text: string, is_on_page: boolean = false): string {
+export function remapKeys(text: string/*, is_on_page: boolean = false*/): string {
     let text_compare: string = "";
     const segments: string[] = Array.from(text);
     const counter_arr: number[] = [];
@@ -91,15 +91,15 @@ function remapKeys(text: string, is_on_page: boolean = false): string {
     //finds the first input box in the webpage (and assumes such an element can only be not null)
     // while on page, *THE* call to this func will need a true following the text argument.
     //this is because the 'document' doesn't exist while not on the page.
-    if (is_on_page) {
+    /*if (is_on_page) {
 
-        const input_element = document.getElementById('input') as HTMLInputElement;
+        const input_element = document.getElementById('textarea') as HTMLInputElement;
         input_element.addEventListener('keydown', (e: KeyboardEvent) => {
             // Mapping: Pressing mst_letter will output scnd_mst_lttr
             const keyMap: { [key: string]: string } = {
-                mst_lttr: scnd_mst_lttr,
-                scnd_mst_lttr: thrd_mst_lttr,
-                thrd_mst_lttr: mst_lttr
+                [mst_lttr]: scnd_mst_lttr,
+                [scnd_mst_lttr]: thrd_mst_lttr,
+                [thrd_mst_lttr]: mst_lttr
             };
             if (keyMap[e.key]) {
                 e.preventDefault(); // Stop the original character from appearing
@@ -115,20 +115,20 @@ function remapKeys(text: string, is_on_page: boolean = false): string {
                 input_element.selectionStart = input_element.selectionEnd = start + 1;
             }
         });
-    }
+    }*/
     text_compare = out.join('');
     return out.join('');
 } 
 // Rule 7
 //have one of the devs names in your password
-function contain_dev(str:string):boolean {
+export function contain_dev(str:string):boolean {
     //if any of the following searches return is at least 0, return true. ow return false
     const devs: Array<number> = [str.search(/Isaac/i), str.search(/Isak/i), str.search(/Felix/i)];
     return !devs.every(x => x === -1);
 }
 //Rule 9 
 //text argument is needed only for test cases. fire argument is so it can adapt to the systems relevant fire emoji
-function wildFire(text: string, fire: string = "🔥", is_on_page: boolean = false): string {
+export function wildFire(text: string, fire: string = "🔥", is_on_page: boolean = false): string {
     const segments: string[] = Array.from(text);
     
     let out: Array<string> = segments.slice();
@@ -140,7 +140,8 @@ function wildFire(text: string, fire: string = "🔥", is_on_page: boolean = fal
     if(is_on_page) {
         const input_element = document.getElementById('input') as HTMLInputElement;
         
-        let spontanous_combustion = randomInt(out.length)
+        out = Array.from(input_element.value);
+        let spontanous_combustion: number = Math.floor(Math.random() * out.length);
         
         out[spontanous_combustion] = fire;
         input_element.value = out.join('');
@@ -174,29 +175,24 @@ function wildFire(text: string, fire: string = "🔥", is_on_page: boolean = fal
     return out.join('');
 
 }
+
 //rule 11, time in seconds
 export async function video_exist(str: string, time_to_match: number): Promise<boolean> {
     function iso_to_sec(iso_string: string): number {
         const match = iso_string.match(/PT(?:(\d+)H)?(?:(\d+)M)?(?:(\d+)S)?/);
-        let time = 0;
-        if (match[1] != undefined) {
-            time += 3600 * Number(match[1]);
-        }
-        if (match[2] != undefined) {
-            time += 60 * Number(match[2]);
-        }
-        if (match[3] != undefined) {
-            time += Number(match[3]);
-        }
-        console.log("time: ", time);
-        return time;
+        if (!match) return 0;
+        const hours = Number(match[1] ?? 0);
+        const minutes = Number(match[2] ?? 0);
+        const seconds = Number(match[3] ?? 0);
+
+        return hours * 3600 + minutes * 60 + seconds;
     }
 
     // OBS!!! Expects the id to be last in the string
     const video_id = str.slice(-11);
     console.log("video_id: ", video_id);
 
-    const url = `https://www.googleapis.com/youtube/v3/videos?id=${video_id}&part=contentDetails&key=${process.env.YOUTUBE_API_KEY}`;
+    const url = `https://www.googleapis.com/youtube/v3/videos?id=${video_id}&part=contentDetails&key=${import.meta.env.VITE_YOUTUBE_API_KEY}`;
     console.log("url: ", url);
     
     const response = await fetch(url);

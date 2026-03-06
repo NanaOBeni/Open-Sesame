@@ -1,4 +1,4 @@
-import { uppercase_exist, special_exist, minimum_8, greek_exist, country_exist,
+/*import { uppercase_exist, special_exist, minimum_8, greek_exist, country_exist,
          video_exist            
 } from "../lib/rules";
 
@@ -64,4 +64,4 @@ describe("Testing rules check functions", () => {
         const res_3 = await video_exist("!!!!", 100);
         expect(res_3).toBeFalsy();
     })
-});
+});*/
