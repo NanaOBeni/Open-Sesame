@@ -1,14 +1,14 @@
-/*import { uppercase_exist, special_exist, minimum_8, greek_exist, country_exist,
-         video_exist            
+import { uppercase_exist, special_exist, minimum_8, greek_exist, country_exist
 } from "../lib/rules";
 
 const empty = "";
 
+/*
 test('YOUTUBE_API_KEY is loaded', () => {
   console.log('YOUTUBE_API_KEY:', process.env.YOUTUBE_API_KEY);
   expect(process.env.YOUTUBE_API_KEY).toBeDefined();
 });
-
+*/
 describe("Testing rules check functions", () => {
     test("Testing uppercase", () => {
         const undercase = "dgasuidgasudg";
@@ -53,7 +53,7 @@ describe("Testing rules check functions", () => {
         expect(country_exist(country, "japan")).toBeTruthy();
         expect(country_exist(country_plus, "Sweden")).toBeTruthy();
     });
-
+/*
     test("YOUTUBE API", async () => {
         const res_1 = await video_exist("Aq5WXmQQooo", 14);
         expect(res_1).toBeTruthy();
@@ -64,4 +64,5 @@ describe("Testing rules check functions", () => {
         const res_3 = await video_exist("!!!!", 100);
         expect(res_3).toBeFalsy();
     })
-});*/
+*/
+});

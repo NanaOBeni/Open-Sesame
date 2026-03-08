@@ -1,7 +1,15 @@
 //import * as dotenv from "dotenv";
 //dotenv.config();
 
-// Rule 1
+/**
+ * Rule 1
+ * 
+ * Check if an uppcase letter exist in a string
+ *
+ * @param {string} str - The string to be checked
+ *
+ * @return {boolean}
+ */
 export function uppercase_exist(str: string): boolean {
     const has_capital = /[A-Z]/.test(str);
 
@@ -12,7 +20,15 @@ export function uppercase_exist(str: string): boolean {
     return false;
 }
 
-// Rule 2
+/**
+ * Rule 2
+ * 
+ * Check if a special char exist in a string
+ *
+ * @param {string} str - The string to be checked
+ *
+ * @return {boolean}
+ */
 export function special_exist(str: string): boolean {
     const has_special = /[^A-Za-z0-9 ]/.test(str);
 
@@ -23,7 +39,15 @@ export function special_exist(str: string): boolean {
     return false;
 }
 
-// Rule 3
+/**
+ * Rule 3
+ * 
+ * Check if a minimum of 8 characters exist in a string
+ *
+ * @param {string} str - The string to be checked
+ *
+ * @return {boolean}
+ */
 export function minimum_8(str: string): boolean {
     if (str.length >= 8) {
         return true;
@@ -32,7 +56,15 @@ export function minimum_8(str: string): boolean {
     return false;
 }
 
-// Rule 4
+/**
+ * Rule 4
+ * 
+ * Check if a greek character exist in a string
+ *
+ * @param {string} str - The string to be checked
+ *
+ * @return {boolean}
+ */
 export function greek_exist(str: string): boolean {
     const has_greek = /\p{Script=Greek}/u.test(str);
     
@@ -43,7 +75,16 @@ export function greek_exist(str: string): boolean {
     return false;
 }
 
-// Rule 5
+/**
+ * Rule 5
+ * 
+ * Check if a country exist in a string
+ *
+ * @param {string} str - The string to be checked
+ * @param {string} country - The country expected to exist
+ *
+ * @return {boolean}
+ */
 export function country_exist(str: string, country: string): boolean {
     const regex = new RegExp(country, "i");
     const has_country = regex.test(str);
@@ -119,8 +160,16 @@ export function remapKeys(text: string/*, is_on_page: boolean = false*/): string
     text_compare = out.join('');
     return out.join('');
 } 
-// Rule 7
-//have one of the devs names in your password
+
+/**
+ * Rule 7
+ * 
+ * Check if at least one dev exist in a string
+ *
+ * @param {string} str - the string to be checked
+ *
+ * @return {boolean}
+ */
 export function contain_dev(str:string):boolean {
     //if any of the following searches return is at least 0, return true. ow return false
     const devs: Array<number> = [str.search(/Isaac/i), str.search(/Isak/i), str.search(/Felix/i)];
@@ -176,8 +225,20 @@ export function wildFire(text: string, fire: string = "🔥", is_on_page: boolea
 
 }
 
-//rule 11, time in seconds
+/**
+ * Rule 11
+ * 
+ * Check if a youtube video id exist in a string
+ *
+ * @param {string} str - The string to be checked
+ * @param {number} time_to_match - The time the video has to have
+ *
+ * @precondition the video id must be at the end of the string
+ *
+ * @return {Promise<boolean>}
+ */
 export async function video_exist(str: string, time_to_match: number): Promise<boolean> {
+    // Convert iso_8601 time to a number
     function iso_to_sec(iso_string: string): number {
         const match = iso_string.match(/PT(?:(\d+)H)?(?:(\d+)M)?(?:(\d+)S)?/);
         if (!match) return 0;
@@ -190,24 +251,17 @@ export async function video_exist(str: string, time_to_match: number): Promise<b
 
     // OBS!!! Expects the id to be last in the string
     const video_id = str.slice(-11);
-    console.log("video_id: ", video_id);
-
-    const url = `https://www.googleapis.com/youtube/v3/videos?id=${video_id}&part=contentDetails&key=${import.meta.env.VITE_YOUTUBE_API_KEY}`;
-    console.log("url: ", url);
     
+    const url = `https://www.googleapis.com/youtube/v3/videos?id=${video_id}&part=contentDetails&key=${import.meta.env.VITE_YOUTUBE_API_KEY}`;
+       
     const response = await fetch(url);
-    console.log("response: ", response);
     const json = await response.json();
-    console.log("json: ", json);
 
     if (!json.items || json.items.length === 0) {
-        console.log("if check was called!")
-        return false;
+                return false;
     }
 
     const time_iso_8601 = json.items[0].contentDetails.duration;
-    console.log("time_iso", time_iso_8601);
-
     const time = iso_to_sec(time_iso_8601);
 
     return time_to_match === time;
