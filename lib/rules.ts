@@ -14,7 +14,7 @@ export function uppercase_exist(str: string): boolean {
 
 // Rule 2
 export function special_exist(str: string): boolean {
-    const has_special = /[^A-Za-z0-9 ]/.test(str);
+    const has_special = /[^A-Za-z0-9🔥]/.test(str);
 
     if (has_special) {
         return true;
@@ -24,6 +24,17 @@ export function special_exist(str: string): boolean {
 }
 
 // Rule 3
+export function number_exist(str: string): boolean {
+    const has_number = /[0-9]/.test(str);
+
+    if (has_number) {
+        return true;
+    }
+
+    return false;
+}
+
+// Rule 4
 export function minimum_8(str: string): boolean {
     if (str.length >= 8) {
         return true;
@@ -32,7 +43,7 @@ export function minimum_8(str: string): boolean {
     return false;
 }
 
-// Rule 4
+// Rule 5
 export function greek_exist(str: string): boolean {
     const has_greek = /\p{Script=Greek}/u.test(str);
     
@@ -43,7 +54,7 @@ export function greek_exist(str: string): boolean {
     return false;
 }
 
-// Rule 5
+// Rule 6
 export function country_exist(str: string, country: string): boolean {
     const regex = new RegExp(country, "i");
     const has_country = regex.test(str);
@@ -54,8 +65,8 @@ export function country_exist(str: string, country: string): boolean {
 
     return false;
 }
-//rule 6
-//remap keys. CALL ONLY ONCE.
+// rule 7
+// remap keys. CALL ONLY ONCE.
 export function remapKeys(text: string/*, is_on_page: boolean = false*/): string {
     let text_compare: string = "";
     const segments: string[] = Array.from(text);
@@ -119,7 +130,7 @@ export function remapKeys(text: string/*, is_on_page: boolean = false*/): string
     text_compare = out.join('');
     return out.join('');
 } 
-// Rule 7
+// Rule 8
 //have one of the devs names in your password
 export function contain_dev(str:string):boolean {
     //if any of the following searches return is at least 0, return true. ow return false
@@ -176,6 +187,29 @@ export function wildFire(text: string, fire: string = "🔥", is_on_page: boolea
 
 }
 
+// modified rule 9
+// adjusted version of Rule 9 thatll work with react
+export function spreadFire(text: string, fire: string = "🔥"): string {
+    const out = Array.from(text);
+    //segments.length is equal to the length of current password
+    
+    if(!out.includes(fire)) {
+        const randomIndex = Math.floor(Math.random() * out.length)
+        out [randomIndex] = fire
+        return out.join('')
+    }
+    const outSpread = [...out]
+    for (let i = 0; i < outSpread.length; i++) {
+        if (outSpread[i] === fire) {
+            //body apparently ok to do inline if it is specifically a single statement
+            //(e.g, not a declaration or multiple statements)
+            if (i > 0 && out[i - 1] !== fire) out[i - 1] = fire;
+            if (i + 1 < outSpread.length && out[i + 1] !== fire) out[i + 1] = fire;
+        }
+    }
+    return out.join('');
+}
+
 //rule 11, time in seconds
 export async function video_exist(str: string, time_to_match: number): Promise<boolean> {
     function iso_to_sec(iso_string: string): number {
@@ -212,5 +246,3 @@ export async function video_exist(str: string, time_to_match: number): Promise<b
 
     return time_to_match === time;
 }
-
-
