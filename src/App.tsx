@@ -67,7 +67,7 @@ export default function App() {
         break
       }
     }
-    if (identifier && RulesFinished < rules.length) {
+    if (identifier && RulesFinished <= rules.length) {
       setRulesFinished(RulesFinished + 1)
     }
   }, [password, RulesFinished])
