@@ -2,3 +2,66 @@ body {
   margin: 0;
   padding: 0;
 }
+
+#gameTitle {
+  color: #3f2e5b;
+  padding-top: 10vh;
+  font-family: Georgia, serif;
+  font-size: 60px;
+}
+
+#gameSubtitle {
+  color: #3f2e5b;
+  margin-top: -2vh;
+  font-size: 30px;
+  font-family: Georgia, serif;
+  padding-bottom: 3vh;
+}
+
+#passwordLabel {
+  display: block;
+  color: #3f2e5b;
+  margin-bottom: -8px;
+  padding-right: 9vw;
+  font-size: 25px;
+  font-family: Georgia, serif;
+}
+
+#typeArea { 
+  min-height: 30px;
+  border: 5px solid #3f2e5b;
+  border-radius: 8px;
+  box-sizing: border-box;
+  overflow: hidden;
+  resize: none;
+  padding-top: 5px;
+  padding-bottom: 5px;
+  padding-left: 5px;
+  padding-right: 5px;
+  width: 19vw;
+  font-size: 25px;
+}
+
+#ruleField {
+  display: flex;
+  flex-direction: column;
+  transition: opacity 0.75s ease-in;
+  justify-content: center;
+  align-items: center;
+  margin-top: 20px;
+  padding-left: 10px;
+  padding-right: 10px;
+  font-family: Georgia, serif;
+  font-size: 20px;
+  text-align: center;
+}
+
+.ruleItem {
+  border-radius: 8px;
+  margin-top: 0px;
+  padding-top: 20px;
+  padding-bottom: 20px;
+  padding-left: 10px;
+  padding-right: 10px;
+  width: 300px;
+}
